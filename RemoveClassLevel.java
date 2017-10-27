@@ -1,7 +1,7 @@
 /*
- * $Id: AddClasses.java 1698 2012-03-07 16:42:47Z euzenat $
+ * $Id: RemoveClassLevel.java 1676 2012-02-15 12:16:50Z euzenat $
  *
- * Copyright (C) 2011, INRIA
+ * Copyright (C) 2011-2012, INRIA
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -24,21 +24,20 @@ package fr.inrialpes.exmo.align.gen.alt;
 import com.hp.hpl.jena.ontology.OntClass;
 
 import java.util.Properties;
-import java.util.List;
+import java.util.HashMap;
 
 import fr.inrialpes.exmo.align.gen.Alterator;
 import fr.inrialpes.exmo.align.gen.ParametersIds;
 
 /**
- * class AddClasses
+ * class RemoveClassLevel
  */
-public class AddClasses extends BasicAlterator {
-
+public class RemoveClassLevel extends BasicAlterator {
     /**
      *
      * @param om
      */
-    public AddClasses( Alterator om ) {
+    public RemoveClassLevel( Alterator om ) {
 	initModel( om );
     };
 
@@ -48,21 +47,19 @@ public class AddClasses extends BasicAlterator {
      * @return
      */
     public Alterator modify( Properties params ) {
-	String p = params.getProperty( ParametersIds.ADD_CLASSES );
+	String p = params.getProperty( ParametersIds.REMOVE_CLASSESLEVEL );
 	if ( p == null ) return null;
-	float percentage = Float.parseFloat( p );
-        List<OntClass> classes = getOntologyClasses();                          //get the list of classes from the Ontology
-        int nbClasses = classes.size();                                         //number of classes from the Ontology
-        int toAdd = Math.round( percentage*nbClasses );
-		
-        buildClassHierarchy();                                                  //check if the classHierarchy is built
-
-        //build the list of classes to which adding a subclass
-        int[] n = randNumbers( nbClasses, toAdd );
-        for ( int i=0; i<toAdd; i++ ) {
-            addClass( classes.get(n[i]), getRandomString() ); //give a random URI to the new class
-        }
+	int level = Integer.parseInt( p );
+        HashMap<String, String> uris = new HashMap<String, String>();
+        //if ( debug ) System.err.println( "Level " + level );
+        buildClassHierarchy();							//build the class hierarchy if necessary
+	for ( OntClass cl : classHierarchy.getClassesFromLevel( modifiedModel, level ) ) {                                //remove the classes from the hierarchy
+            String parentURI = removeClass( cl );
+            uris.put( cl.getURI(), parentURI );
+	}
+        //checks if the class appears like unionOf .. and replaces its appearence with the superclass
+        modifiedModel = changeDomainRange( uris );
 	return this; // useless
-    }
+    };
 
 }
