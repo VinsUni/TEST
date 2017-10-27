@@ -59,14 +59,18 @@ import java.util.Properties;
   * @version $Id: BasicParameters.java 1704 2012-03-10 16:24:07Z euzenat $ 
  */
 
+
+//@Deprecated
 /**
  * class BasicParameters
  */
-//@Deprecated
 public class BasicParameters extends Properties implements Parameters, Cloneable {
  
     static final long serialVersionUID = 400L;
 
+	/**
+	 * Constructor
+	 */
     public BasicParameters() {}
 
 	/**

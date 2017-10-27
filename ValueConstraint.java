@@ -20,10 +20,12 @@
 
 package fr.inrialpes.exmo.align.impl.edoal;
 
+
+// JE: 2012 this class seems not used anywhere
+
 /**
  * class ValueConstraint
  */
-// JE: 2012 this class seems not used anywhere
 public class ValueConstraint implements Cloneable {
 
     // JE: 2010 this must be replaced by path-or-value
